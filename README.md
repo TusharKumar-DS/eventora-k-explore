@@ -4,8 +4,8 @@ A responsive event management website for the **K Explore – Web Designing** as
 
 | | |
 |---|---|
-| **Live website** | `https://quiet-parfait-bee904.netlify.app/` |
-| **GitHub repository** | `https://github.com/TusharKumar-DS/eventora-k-explore` |
+| **Live website** | https://quiet-parfait-bee904.netlify.app/ |
+| **GitHub repository** | https://github.com/TusharKumar-DS/eventora-k-explore |
 | **Author** | Tushar Kumar (Roll No. 24158098) |
 
 ## Visual identity
