@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>EVENTORA — Find Your People. Experience More.</title>
+  <meta name="description" content="Eventora is a responsive event management website. Explore upcoming events, search and filter by category, and register in seconds.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%234f46e5'/%3E%3Cpath d='M18 24h28v22H18z' fill='none' stroke='white' stroke-width='4'/%3E%3Cpath d='M18 32h28M26 18v8M38 18v8' stroke='white' stroke-width='4'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <script>
+    // Apply saved theme before paint to avoid a flash
+    try {
+      var t = localStorage.getItem("eventora-theme");
+      if (!t) t = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+      document.documentElement.dataset.theme = t;
+    } catch (e) {}
+  </script>
+</head>
+<body>
+  <a class="skip" href="#events">Skip to events</a>
+  <noscript>
+    <div class="noscript">
+      <strong>JavaScript is turned off.</strong> Eventora loads its events, search and registration form with JavaScript.
+      Please enable JavaScript in your browser settings and reload this page.
+    </div>
+  </noscript>
+
+  <header class="site-header" id="top">
+    <div class="container nav">
+      <a href="#top" class="logo" aria-label="Eventora home">
+        <span class="logo-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
+        </span>
+        Eventora
+      </a>
+      <nav id="nav-links" class="nav-links" aria-label="Main">
+        <a href="#featured">Featured</a>
+        <a href="#events">All Events</a>
+        <a href="#how">How it works</a>
+        <a href="#my-registrations">My Registrations <span class="badge" id="reg-count" hidden>0</span></a>
+      </nav>
+      <div class="nav-actions">
+        <button class="icon-btn" id="theme-toggle" aria-label="Toggle dark mode" title="Toggle dark / light mode">
+          <svg class="i-moon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+          <svg class="i-sun" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+        </button>
+        <button class="icon-btn menu-btn" id="menu-btn" aria-label="Open menu" aria-expanded="false" aria-controls="nav-links">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-bg" aria-hidden="true"><span class="orb o1"></span><span class="orb o2"></span><span class="orb o3"></span></div>
+      <div class="container hero-grid">
+        <div class="hero-copy reveal">
+          <p class="eyebrow">YOUR CAMPUS &amp; CITY, ALL IN ONE PLACE</p>
+          <h1>Life happens<br>when you <span class="grad">show up.</span></h1>
+          <p class="lead">Discover experiences worth remembering. From technology summits and creative workshops to live music and cultural celebrations, find your next unforgettable moment.</p>
+          <div class="hero-cta">
+            <a href="#events" class="btn btn-primary">Explore events</a>
+            <a href="#featured" class="btn btn-ghost">See featured</a>
+          </div>
+          <dl class="stats">
+            <div><dt>Events</dt><dd id="stat-events">12</dd></div>
+            <div><dt>Categories</dt><dd id="stat-cats">6</dd></div>
+            <div><dt>Free events</dt><dd id="stat-free">3</dd></div>
+          </dl>
+        </div>
+        <aside class="hero-visual reveal" aria-label="Featured event experience and next upcoming event">
+          <img class="hero-photo" src="assets/images/hero.jpg" alt="Crowd enjoying an outdoor festival" width="900" height="1200" fetchpriority="high">
+          <div class="next-card">
+            <p class="eyebrow">Happening next</p>
+            <h2 id="next-title">—</h2>
+            <p class="muted" id="next-meta"></p>
+            <div class="countdown" id="next-countdown" aria-live="off"></div>
+            <button class="btn btn-primary btn-block" id="next-btn">View details</button>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- FEATURED -->
+    <section class="section" id="featured">
+      <div class="container">
+        <div class="section-head reveal">
+          <h2>Not-to-miss experiences</h2>
+          <p class="muted">Upcoming events, hand-picked for experiences worth adding to your calendar.</p>
+        </div>
+        <div class="grid" id="featured-grid"></div>
+      </div>
+    </section>
+
+    <!-- ALL EVENTS -->
+    <section class="section alt" id="events">
+      <div class="container">
+        <div class="section-head reveal">
+          <h2>Find your next experience</h2>
+          <p class="muted">Search events by name, venue or keyword. Filter by category and find your kind of experience.</p>
+        </div>
+
+        <div class="toolbar reveal">
+          <div class="search">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+            <label for="search" class="sr-only">Search events</label>
+            <input id="search" type="search" placeholder="Search events, venues, keywords…" autocomplete="off">
+          </div>
+          <label class="select-wrap">
+            <span class="sr-only">Sort events</span>
+            <select id="sort">
+              <option value="date">Soonest first</option>
+              <option value="price-asc">Price: low to high</option>
+              <option value="price-desc">Price: high to low</option>
+              <option value="name">Name A–Z</option>
+            </select>
+          </label>
+        </div>
+        <div class="chips" id="chips" role="group" aria-label="Filter by category"></div>
+        <div class="count-row">
+          <p class="result-count" id="result-count" aria-live="polite"></p>
+          <label class="toggle"><input type="checkbox" id="show-past"> Show past events</label>
+        </div>
+
+        <div class="grid" id="events-grid"></div>
+        <div class="empty" id="empty" hidden>
+          <div class="empty-icon" aria-hidden="true">🔍</div>
+          <h3 id="empty-title">No events found</h3>
+          <p class="muted" id="empty-text">Try a different keyword or clear the filters.</p>
+          <button class="btn btn-ghost" id="clear-filters">Clear filters</button>
+          <button class="btn btn-ghost" id="empty-past" hidden>Show past events</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- HOW IT WORKS -->
+    <section class="section" id="how">
+      <div class="container">
+        <div class="section-head reveal">
+          <h2>How it works</h2>
+          <p class="muted">From discovery to confirmation in three steps.</p>
+        </div>
+        <ol class="steps">
+          <li class="reveal"><span class="step-n">1</span><h3>Discover</h3><p>Browse featured events or search and filter by category.</p></li>
+          <li class="reveal"><span class="step-n">2</span><h3>Choose</h3><p>Open an event to see the schedule, venue, price and seats left.</p></li>
+          <li class="reveal"><span class="step-n">3</span><h3>Register</h3><p>Fill in a short form and get an instant confirmation with a reference ID.</p></li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- MY REGISTRATIONS -->
+    <section class="section alt" id="my-registrations">
+      <div class="container">
+        <div class="section-head reveal">
+          <h2>My registrations</h2>
+          <p class="muted">Saved in this browser using Local Storage.</p>
+        </div>
+        <div id="reg-list" class="reg-list"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-main">
+      <div class="footer-brand">
+        <a href="#top" class="logo" aria-label="Eventora home"><span class="logo-mark" aria-hidden="true">E</span> EVENTORA</a>
+        <p>Find your people. Experience more.<br>Discover experiences worth remembering.</p>
+      </div>
+      <div class="footer-column">
+        <h2>Explore</h2>
+        <a href="#featured">Featured events</a>
+        <a href="#events">All upcoming events</a>
+        <a href="#how">How it works</a>
+      </div>
+      <div class="footer-column">
+        <h2>Categories</h2>
+        <button type="button" data-footer-cat="Technology">Technology</button>
+        <button type="button" data-footer-cat="Music">Music</button>
+        <button type="button" data-footer-cat="Sports">Sports</button>
+      </div>
+      <div class="footer-column">
+        <h2>Your account</h2>
+        <a href="#my-registrations">My registrations</a>
+        <a href="#top">Back to top ↑</a>
+      </div>
+    </div>
+    <div class="container photo-credits">
+      <details>
+        <summary>Photography credits</summary>
+        <ul>
+          <li><a href="https://unsplash.com/photos/speaker-presenting-on-stage-to-an-audience-AsxOJcsaR4g" target="_blank" rel="noopener noreferrer">Carlos Gil — Technology Summit</a></li>
+          <li><a href="https://unsplash.com/photos/people-working-on-laptops-at-a-table-Uywp-JHgVP4" target="_blank" rel="noopener noreferrer">Compagnons — Hackathon</a></li>
+          <li><a href="https://unsplash.com/photos/a-crowded-outdoor-music-festival-with-a-stage-KycDD2l0Uqk" target="_blank" rel="noopener noreferrer">Tanya Prodaan — Music Festival</a></li>
+          <li><a href="https://unsplash.com/photos/dancers-in-traditional-indian-attire-perform-on-stage-2yPbQwOfOxk" target="_blank" rel="noopener noreferrer">Tanmay Abhay Mahajan — Classical Dance</a></li>
+          <li><a href="https://unsplash.com/photos/runners-in-a-marathon-race-on-a-city-street-nFz4XuVpPD8" target="_blank" rel="noopener noreferrer">Miguel Alcântara — Marathon</a></li>
+          <li><a href="https://unsplash.com/photos/cricket-stadium-with-players-on-the-field-uQMirJC0bVI" target="_blank" rel="noopener noreferrer">Zoshua Colah — Cricket</a></li>
+          <li><a href="https://unsplash.com/photos/team-brainstorming-ideas-on-a-glass-wall-with-sticky-notes-2kHqlCwj35E" target="_blank" rel="noopener noreferrer">Vitaly Gariev — Design Workshop</a></li>
+          <li><a href="https://unsplash.com/photos/person-coding-on-laptop-workspace-UcYBL5V0xWQ" target="_blank" rel="noopener noreferrer">Nubelson Fernandes — AI Bootcamp</a></li>
+          <li><a href="https://unsplash.com/photos/woman-speaking-at-business-presentation-KKXkRtD3qIE" target="_blank" rel="noopener noreferrer">Julia Potter — Startup Pitch</a></li>
+          <li><a href="https://unsplash.com/photos/people-listen-attentively-during-a-business-presentation-m76kVfIRS5U" target="_blank" rel="noopener noreferrer">Vitaly Gariev — Career Expo</a></li>
+          <li><a href="https://unsplash.com/photos/dancers-in-colorful-festival-costumes-perform-on-stage-yJwzfoxvR14" target="_blank" rel="noopener noreferrer">Janilson Furtado — Cultural Fest</a></li>
+          <li><a href="https://unsplash.com/photos/people-walking-on-a-street-with-old-buildings-9xQ2kZwjBA0" target="_blank" rel="noopener noreferrer">MChe Lee — Photo Walk</a></li>
+          <li><a href="https://unsplash.com/photos/crowded-outdoor-festival-with-tents-and-people-UxYNdU0jdqQ" target="_blank" rel="noopener noreferrer">Felicia Varzari — Hero Photograph</a></li>
+        </ul>
+      </details>
+    </div>
+    <div class="container foot footer-bottom">
+      <p>© <span id="year"></span> Eventora. Built with HTML5, CSS3 &amp; JavaScript.</p>
+      <span>Designed for experiences that bring people together.</span>
+    </div>
+  </footer>
+
+  <!-- EVENT DETAILS + REGISTRATION MODAL -->
+  <dialog id="modal" aria-labelledby="m-title">
+    <div class="modal-inner">
+      <button class="modal-close icon-btn" id="m-close" aria-label="Close dialog">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+      <div class="m-hero"><img id="m-img" alt="" width="800" height="500"><span class="tag" id="m-cat"></span></div>
+      <div class="m-body">
+        <div class="m-info">
+          <h2 id="m-title"></h2>
+          <ul class="meta">
+            <li><b>📅 Date</b><span id="m-date"></span></li>
+            <li><b>📍 Venue</b><span id="m-venue"></span></li>
+            <li><b>🎟️ Price</b><span id="m-price"></span></li>
+            <li><b id="m-seats-label">💺 Seats left</b><span id="m-seats"></span></li>
+          </ul>
+          <div class="countdown small" id="m-countdown"></div>
+          <p id="m-desc" class="m-desc"></p>
+          <h3>Schedule</h3>
+          <ol class="timeline" id="m-schedule"></ol>
+        </div>
+
+        <div class="m-form">
+          <div id="form-view">
+            <h3>Register for this event</h3>
+            <form id="reg-form" novalidate>
+              <div class="field">
+                <label for="f-name">Full name</label>
+                <input id="f-name" name="name" type="text" autocomplete="name" placeholder="e.g. Tushar Kumar" required aria-required="true" aria-describedby="e-name">
+                <small class="err" id="e-name" role="alert"></small>
+              </div>
+              <div class="field">
+                <label for="f-email">Email address</label>
+                <input id="f-email" name="email" type="email" autocomplete="email" placeholder="you@example.com" required aria-required="true" aria-describedby="e-email">
+                <small class="err" id="e-email" role="alert"></small>
+              </div>
+              <div class="field">
+                <label for="f-phone">Phone number</label>
+                <input id="f-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="10-digit mobile number" required aria-required="true" aria-describedby="e-phone">
+                <small class="err" id="e-phone" role="alert"></small>
+              </div>
+              <div class="field">
+                <label for="f-event">Selected event</label>
+                <select id="f-event" name="event" required aria-required="true" aria-describedby="e-event"></select>
+                <small class="err" id="e-event" role="alert"></small>
+              </div>
+              <div class="field">
+                <label for="f-tickets">Number of tickets <span class="muted">(max 5)</span></label>
+                <input id="f-tickets" name="tickets" type="number" min="1" max="5" value="1" required aria-required="true" aria-describedby="e-tickets">
+                <small class="err" id="e-tickets" role="alert"></small>
+              </div>
+              <div class="field check">
+                <input id="f-terms" name="terms" type="checkbox" required aria-required="true" aria-describedby="e-terms">
+                <label for="f-terms">I agree to the event rules and terms.</label>
+                <small class="err" id="e-terms" role="alert"></small>
+              </div>
+              <button class="btn btn-primary btn-block" type="submit" id="submit-btn">Confirm registration</button>
+            </form>
+          </div>
+
+          <div id="closed-view" class="closed-view" hidden>
+            <div class="closed-icon" aria-hidden="true">⏰</div>
+            <h3>Registration closed</h3>
+            <p class="muted">This event has already started or ended, so registration is no longer available.</p>
+            <button class="btn btn-ghost" id="closed-close" type="button">Close</button>
+          </div>
+
+          <div id="success-view" hidden>
+            <div class="success-icon" aria-hidden="true">✓</div>
+            <h3>You're registered!</h3>
+            <p id="success-msg" tabindex="-1"></p>
+            <p class="ref">Reference ID: <b id="success-ref"></b></p>
+            <div class="success-actions">
+              <button class="btn btn-ghost" id="success-close">Close</button>
+              <a class="btn btn-primary" href="#my-registrations" id="success-view-regs">View my registrations</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="js/events.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
