@@ -634,3 +634,55 @@ dialog { border-radius: 25px; }
   border-radius: 30px;
 }
 .hero-visual.image-fallback .hero-photo { visibility: hidden; }
+
+
+/* Demo checkout — clearly labelled as a simulation, never a real charge. */
+.payment-view {
+  padding: 1.25rem;
+  border: 1px solid var(--line);
+  border-radius: 1rem;
+  background: var(--surface, var(--card));
+}
+.payment-icon {
+  display: grid;
+  place-items: center;
+  width: 2.8rem;
+  height: 2.8rem;
+  margin-bottom: .85rem;
+  border-radius: .9rem;
+  color: #fff;
+  background: linear-gradient(135deg, #9b8cff, #4db6df);
+  font-weight: 800;
+  font-size: 1.35rem;
+}
+.payment-view h3 { margin: 0 0 .4rem; }
+.payment-summary {
+  display: grid;
+  gap: .7rem;
+  margin: 1rem 0;
+  padding: 1rem;
+  border: 1px solid var(--line);
+  border-radius: .8rem;
+}
+.payment-summary > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.payment-summary span { color: var(--muted); }
+.payment-summary b { text-align: right; }
+.payment-summary .payment-total {
+  padding-top: .7rem;
+  border-top: 1px solid var(--line);
+  font-size: 1.08rem;
+}
+.demo-notice {
+  margin: 1rem 0;
+  padding: .8rem;
+  border-radius: .7rem;
+  color: var(--text);
+  background: color-mix(in srgb, #eab308 12%, transparent);
+  font-size: .88rem;
+  line-height: 1.5;
+}
+.payment-view .btn-block + .btn-block { margin-top: .55rem; }

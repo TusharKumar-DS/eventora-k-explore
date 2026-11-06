@@ -369,6 +369,9 @@
       upcoming().sort((a, b) => startsAt(a) - startsAt(b))
         .map((x) => `<option value="${x.id}">${x.title} — ${fmtDate(x.date)}</option>`).join("");
     resetForm();
+    pendingRegistration = null;
+    $("#payment-view").hidden = true;
+    $("#form-view").hidden = false;
     if (!isPast(e)) sel.value = id; // set after reset so the chosen event stays selected
 
     applyModalMode(e);
@@ -486,6 +489,52 @@
     validateField($("#f-tickets"));
   });
 
+  let pendingRegistration = null;
+
+  function completeRegistration(reg, e) {
+    const list = store.read();
+    // Re-check at confirmation time in case the available seats changed during checkout.
+    if (list.some((r) => r.eventId === e.id && r.email === reg.email)) {
+      pendingRegistration = null;
+      $("#payment-view").hidden = true;
+      $("#form-view").hidden = false;
+      $("#e-email").textContent = "This email is already registered for this event.";
+      $("#f-email").setAttribute("aria-invalid", "true");
+      $("#f-email").focus();
+      return;
+    }
+    if (reg.tickets > seatsLeft(e)) {
+      pendingRegistration = null;
+      $("#payment-view").hidden = true;
+      $("#form-view").hidden = false;
+      $("#e-tickets").textContent = `Only ${seatsLeft(e)} seats are now available. Please update your ticket quantity.`;
+      $("#f-tickets").setAttribute("aria-invalid", "true");
+      $("#f-tickets").focus();
+      return;
+    }
+
+    list.push(reg);
+    store.write(list);
+    pendingRegistration = null;
+
+    const paymentText = reg.paymentStatus === "demo-paid"
+      ? ` Demo payment simulated successfully for ${fmtPrice(reg.amount)}; no real money was charged.`
+      : " This was a free event.";
+    $("#success-msg").textContent =
+      `Thank you, ${reg.name}. ${reg.tickets} ticket${reg.tickets > 1 ? "s" : ""} for "${e.title}" on ${fmtDate(e.date)} ` +
+      `${reg.tickets > 1 ? "are" : "is"} confirmed. Your registration is saved in this browser; no email is sent.` +
+      paymentText;
+    $("#success-ref").textContent = reg.ref;
+    $("#form-view").hidden = true;
+    $("#payment-view").hidden = true;
+    $("#success-view").hidden = false;
+    $("#success-msg").focus();
+    modalSeats(e);
+    updateSeats();
+    updateCount();
+    renderRegistrations();
+  }
+
   form.addEventListener("submit", (ev) => {
     ev.preventDefault();
     const fields = $$("input, select", form);
@@ -509,26 +558,48 @@
     const reg = {
       ref: "EVT-" + Date.now().toString(36).toUpperCase().slice(-6) + Math.floor(Math.random() * 90 + 10),
       eventId: e.id,
-      name: $("#f-name").value.trim().replace(/\s+/g, " "),
+      name: $("#f-name").value.trim().replace(/\\s+/g, " "),
       email,
       phone: normPhone($("#f-phone").value),
       tickets: Number($("#f-tickets").value),
-      at: new Date().toISOString()
+      at: new Date().toISOString(),
+      amount: e.price * Number($("#f-tickets").value),
+      paymentStatus: e.price > 0 ? "demo-pending" : "free"
     };
-    list.push(reg);
-    store.write(list);
 
-    // textContent keeps user input safe from HTML injection
-    $("#success-msg").textContent =
-      `Thank you, ${reg.name}. ${reg.tickets} ticket${reg.tickets > 1 ? "s" : ""} for "${e.title}" on ${fmtDate(e.date)} ` +
-      `${reg.tickets > 1 ? "are" : "is"} confirmed. Your registration is saved in this browser; no email is sent.`;
-    $("#success-ref").textContent = reg.ref;
-    $("#form-view").hidden = true;
-    $("#success-view").hidden = false;
-    $("#success-msg").focus();
-    modalSeats(e);
-    updateSeats();
-    updateCount();
+    if (e.price > 0) {
+      pendingRegistration = reg;
+      $("#payment-event").textContent = e.title;
+      $("#payment-tickets").textContent = String(reg.tickets);
+      $("#payment-unit").textContent = fmtPrice(e.price);
+      $("#payment-total").textContent = fmtPrice(reg.amount);
+      $("#form-view").hidden = true;
+      $("#payment-view").hidden = false;
+      $("#payment-confirm").focus();
+      return;
+    }
+
+    completeRegistration(reg, e);
+  });
+
+  $("#payment-back").addEventListener("click", () => {
+    pendingRegistration = null;
+    $("#payment-view").hidden = true;
+    $("#form-view").hidden = false;
+    $("#f-tickets").focus();
+  });
+
+  $("#payment-confirm").addEventListener("click", () => {
+    if (!pendingRegistration) return;
+    const e = byId(pendingRegistration.eventId);
+    if (!e || isPast(e)) {
+      pendingRegistration = null;
+      $("#payment-view").hidden = true;
+      $("#closed-view").hidden = false;
+      return;
+    }
+    pendingRegistration.paymentStatus = "demo-paid";
+    completeRegistration(pendingRegistration, e);
   });
 
   /* ---------- My registrations ---------- */
@@ -557,10 +628,13 @@
       const h = document.createElement("h3"); h.textContent = e.title;
       const status = document.createElement("span");
       status.className = "status " + (past ? "ended" : "ok");
-      status.textContent = past ? "Event ended" : "Confirmed";
+      status.textContent = past ? "Event ended" : (e.price > 0 && r.paymentStatus !== "demo-paid" ? "Payment not verified" : "Confirmed");
       h.append(" ", status);
       const p = document.createElement("p");
-      p.textContent = `${fmtDate(e.date)} · ${r.tickets} ticket${r.tickets > 1 ? "s" : ""} · ${r.name} · Ref ${r.ref}`;
+      const paymentLabel = e.price === 0 ? "Free" :
+        r.paymentStatus === "demo-paid" ? `Demo payment: ${fmtPrice(r.amount ?? e.price * r.tickets)}` :
+        "Legacy demo record — payment not verified";
+      p.textContent = `${fmtDate(e.date)} · ${r.tickets} ticket${r.tickets > 1 ? "s" : ""} · ${r.name} · ${paymentLabel} · Ref ${r.ref}`;
       info.append(h, p);
       const actions = document.createElement("div"); actions.className = "reg-actions";
       const view = document.createElement("button");

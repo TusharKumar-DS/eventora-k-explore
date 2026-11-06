@@ -22,7 +22,7 @@ refined indigo/coral accents, coordinated light/dark themes, and optimized event
 | Browse | Live search (title, venue, city, keywords), category chips, sorting, result count, empty state, "Show past events" toggle |
 | Event details | Modal with banner, date, venue, price, seats left, countdown, description and schedule |
 | Registration | Name, email, phone, selected event, tickets and terms, all validated with JavaScript |
-| Confirmation | Success screen with a reference ID |
+| Confirmation | Success screen with a reference ID; paid events pass through a clearly labelled simulated checkout |
 | My registrations | Stored in `localStorage`; shows status (Confirmed / Event ended) and lets you cancel or remove |
 | Responsive | Mobile, tablet and desktop layouts; hamburger menu on small screens |
 
@@ -50,7 +50,7 @@ eventora/
 2. A small state object (`query`, `category`, `sort`, `showPast`) drives the browse grid, which re-renders on each change.
 3. Choosing an event opens a native `<dialog>` with its details and the registration form.
    Event URLs can be shared, e.g. `index.html#event=marathon`.
-4. Valid registrations are saved to `localStorage` and a confirmation is shown.
+4. Valid free-event registrations are saved to `localStorage` immediately. Paid-event registrations first pass through a clearly labelled demo checkout; selecting “Simulate successful payment” records a demo-paid status. No real payment is processed.
 
 ### Countdowns
 One shared timer updates every countdown on the page. Each countdown is tied to its element, so opening several

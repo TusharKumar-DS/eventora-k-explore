@@ -44,3 +44,16 @@ This review environment blocked browser navigation to local and localhost URLs. 
 ## Submission gate
 
 Do not submit until the project is pushed to GitHub, deployed, and the live site is checked in a normal browser. Replace the README's GitHub/live-site placeholders with the actual verified URLs and capture final screenshots from the deployed site.
+
+
+## Payment-flow update (demo simulation)
+
+The source now distinguishes free registrations from paid-event demo checkout:
+- Free events can be confirmed without a payment step.
+- Paid events show an order summary (event, ticket count, unit price and total).
+- The visitor must explicitly select “Simulate successful payment” before the registration is saved.
+- The checkout clearly states that no real money is charged and no payment gateway is connected.
+- Registration history labels simulated payment status separately from free registrations.
+- Seat availability and duplicate-email checks are repeated at confirmation time.
+
+This is a UI/logic simulation only. It is not a production payment integration and must not be represented as collecting real payments.

@@ -275,6 +275,21 @@
             </form>
           </div>
 
+          <div id="payment-view" class="payment-view" hidden>
+            <div class="payment-icon" aria-hidden="true">₹</div>
+            <h3>Demo checkout</h3>
+            <p class="muted">Review your order before completing the simulated payment.</p>
+            <div class="payment-summary">
+              <div><span>Event</span><b id="payment-event"></b></div>
+              <div><span>Tickets</span><b id="payment-tickets"></b></div>
+              <div><span>Price per ticket</span><b id="payment-unit"></b></div>
+              <div class="payment-total"><span>Total</span><b id="payment-total"></b></div>
+            </div>
+            <p class="demo-notice"><b>Demo only:</b> no money will be charged. This project does not connect to a payment gateway.</p>
+            <button class="btn btn-primary btn-block" id="payment-confirm" type="button">Simulate successful payment</button>
+            <button class="btn btn-ghost btn-block" id="payment-back" type="button">Back to registration</button>
+          </div>
+
           <div id="closed-view" class="closed-view" hidden>
             <div class="closed-icon" aria-hidden="true">⏰</div>
             <h3>Registration closed</h3>
